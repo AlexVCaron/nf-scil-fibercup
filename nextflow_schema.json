@@ -10,7 +10,10 @@
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and save output data.",
-            "required": ["input", "outdir"],
+            "required": [
+                "input",
+                "outdir"
+            ],
             "properties": {
                 "input": {
                     "type": "string",
@@ -34,29 +37,6 @@
                     "fa_icon": "fas fa-envelope",
                     "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
                     "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
-                },
-                "multiqc_title": {
-                    "type": "string",
-                    "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
-                    "fa_icon": "fas fa-file-signature"
-                }
-            }
-        },
-        "reference_genome_options": {
-            "title": "Reference genome options",
-            "type": "object",
-            "fa_icon": "fas fa-dna",
-            "description": "Reference genome related files and options required for the workflow.",
-            "properties": {
-                "fasta": {
-                    "type": "string",
-                    "format": "file-path",
-                    "exists": true,
-                    "mimetype": "text/plain",
-                    "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
-                    "description": "Path to FASTA genome file.",
-                    "help_text": "This parameter is *mandatory* if `--genome` is not specified. If you don't have a BWA index available this will be generated for you automatically. Combine with `--save_reference` to save BWA index for future runs.",
-                    "fa_icon": "far fa-file-code"
                 }
             }
         },
@@ -168,7 +148,14 @@
                     "description": "Method used to save pipeline results to output directory.",
                     "help_text": "The Nextflow `publishDir` option specifies which intermediate files should be saved to the output directory. This option tells the pipeline what method should be used to move these files. See [Nextflow docs](https://www.nextflow.io/docs/latest/process.html#publishdir) for details.",
                     "fa_icon": "fas fa-copy",
-                    "enum": ["symlink", "rellink", "link", "copy", "copyNoFollow", "move"],
+                    "enum": [
+                        "symlink",
+                        "rellink",
+                        "link",
+                        "copy",
+                        "copyNoFollow",
+                        "move"
+                    ],
                     "hidden": true
                 },
                 "email_on_fail": {
@@ -185,14 +172,6 @@
                     "fa_icon": "fas fa-remove-format",
                     "hidden": true
                 },
-                "max_multiqc_email_size": {
-                    "type": "string",
-                    "description": "File size limit when attaching MultiQC reports to summary emails.",
-                    "pattern": "^\\d+(\\.\\d+)?\\.?\\s*(K|M|G|T)?B$",
-                    "default": "25.MB",
-                    "fa_icon": "fas fa-file-upload",
-                    "hidden": true
-                },
                 "monochrome_logs": {
                     "type": "boolean",
                     "description": "Do not use coloured log outputs.",
@@ -205,24 +184,6 @@
                     "fa_icon": "fas fa-people-group",
                     "help_text": "Incoming hook URL for messaging service. Currently, MS Teams and Slack are supported.",
                     "hidden": true
-                },
-                "multiqc_config": {
-                    "type": "string",
-                    "format": "file-path",
-                    "description": "Custom config file to supply to MultiQC.",
-                    "fa_icon": "fas fa-cog",
-                    "hidden": true
-                },
-                "multiqc_logo": {
-                    "type": "string",
-                    "description": "Custom logo file to supply to MultiQC. File name must also be set in the MultiQC config file",
-                    "fa_icon": "fas fa-image",
-                    "hidden": true
-                },
-                "multiqc_methods_description": {
-                    "type": "string",
-                    "description": "Custom MultiQC yaml file containing HTML including a methods description.",
-                    "fa_icon": "fas fa-cog"
                 },
                 "validate_params": {
                     "type": "boolean",
@@ -260,9 +221,6 @@
             "$ref": "#/definitions/input_output_options"
         },
         {
-            "$ref": "#/definitions/reference_genome_options"
-        },
-        {
             "$ref": "#/definitions/institutional_config_options"
         },
         {
@@ -271,5 +229,115 @@
         {
             "$ref": "#/definitions/generic_options"
         }
-    ]
+    ],
+    "properties": {
+        "extent": {
+            "type": "integer",
+            "default": 3
+        },
+        "fa": {
+            "type": "number",
+            "default": 0.7
+        },
+        "min_fa": {
+            "type": "number",
+            "default": 0.5
+        },
+        "min_nvox": {
+            "type": "integer",
+            "default": 300
+        },
+        "roi_radius": {
+            "type": "integer",
+            "default": 20
+        },
+        "set_frf": {
+            "type": "string",
+            "default": "true"
+        },
+        "manual_frf": {
+            "type": "string",
+            "default": "15,4,4"
+        },
+        "b0_thr_extract_b0": {
+            "type": "integer",
+            "default": 10
+        },
+        "dwi_shell_tolerance": {
+            "type": "integer",
+            "default": 20
+        },
+        "min_fodf_shell_value": {
+            "type": "integer",
+            "default": 700
+        },
+        "sh_order": {
+            "type": "integer",
+            "default": 8
+        },
+        "sh_basis": {
+            "type": "string",
+            "default": "descoteaux07"
+        },
+        "fa_threshold": {
+            "type": "number",
+            "default": 0.1
+        },
+        "md_threshold": {
+            "type": "number",
+            "default": 0.003
+        },
+        "relative_threshold": {
+            "type": "number",
+            "default": 0.1
+        },
+        "local_compress_streamlines": {
+            "type": "string",
+            "default": "true"
+        },
+        "local_algo": {
+            "type": "string",
+            "default": "prob"
+        },
+        "local_seeding": {
+            "type": "string",
+            "default": "npv"
+        },
+        "local_nbr_seeds": {
+            "type": "integer",
+            "default": 10
+        },
+        "local_step": {
+            "type": "number",
+            "default": 0.5
+        },
+        "local_theta": {
+            "type": "integer",
+            "default": 20
+        },
+        "local_sfthres": {
+            "type": "number",
+            "default": 0.1
+        },
+        "local_sfthres_init": {
+            "type": "number",
+            "default": 0.5
+        },
+        "local_min_len": {
+            "type": "integer",
+            "default": 20
+        },
+        "local_max_len": {
+            "type": "integer",
+            "default": 200
+        },
+        "local_compress_value": {
+            "type": "number",
+            "default": 0.2
+        },
+        "local_random_seed": {
+            "type": "integer",
+            "default": 0
+        }
+    }
 }

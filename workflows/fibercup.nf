@@ -17,17 +17,6 @@ WorkflowFibercup.initialise(params, log)
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    CONFIG FILES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-ch_multiqc_config          = Channel.fromPath("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
-ch_multiqc_custom_config   = params.multiqc_config ? Channel.fromPath( params.multiqc_config, checkIfExists: true ) : Channel.empty()
-ch_multiqc_logo            = params.multiqc_logo   ? Channel.fromPath( params.multiqc_logo, checkIfExists: true ) : Channel.empty()
-ch_multiqc_custom_methods_description = params.multiqc_methods_description ? file(params.multiqc_methods_description, checkIfExists: true) : file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT LOCAL MODULES/SUBWORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
@@ -43,12 +32,14 @@ include { INPUT_CHECK } from '../subworkflows/local/input_check'
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-//
-// MODULE: Installed directly from nf-core/modules
-//
-include { FASTQC                      } from '../modules/nf-core/fastqc/main'
-include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
-include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
+include { DENOISING_MPPCA } from "./modules/nf-scil/denoising/mppca/main.nf"
+include { UTILS_EXTRACTB0 } from "../modules/nf-scil/utils/extractb0/main.nf"
+include { BETCROP_FSLBETCROP } from "./modules/nf-scil/betcrop/fslbetcrop/main.nf"
+include { PREPROC_N4 } from "./modules/nf-scil/preproc/n4/main.nf"
+include { RECONST_DTIMETRICS } from "./modules/nf-scil/reconst/dtimetrics/main.nf"
+include { RECONST_FRF } from "./modules/nf-scil/reconst/frf/main.nf"
+include { RECONST_FODF } from "./modules/nf-scil/reconst/fodf/main.nf"
+include { TRACKING_LOCALTRACKING } from "./modules/nf-scil/tracking/localtracking/main.nf"
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -56,58 +47,72 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoft
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-// Info required for completion email and summary
-def multiqc_report = []
-
 workflow FIBERCUP {
 
     ch_versions = Channel.empty()
-
+    ch_dwi = Channel.empty()
+    ch_bvec = Channel.empty()
+    ch_bval = Channel.empty()
     //
     // SUBWORKFLOW: Read in samplesheet, validate and stage input files
     //
     INPUT_CHECK (
         file(params.input)
     )
-    ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
-    // TODO: OPTIONAL, you can use nf-validation plugin to create an input channel from the samplesheet with Channel.fromSamplesheet("input")
-    // See the documentation https://nextflow-io.github.io/nf-validation/samplesheets/fromSamplesheet/
-    // ! There is currently no tooling to help you write a sample sheet schema
+    ch_dwi = ch_versions.mix(INPUT_CHECK.out.dwi)
+    ch_bval = ch_versions.mix(INPUT_CHECK.out.bval)
+    ch_bvec = ch_versions.mix(INPUT_CHECK.out.bvec)
 
-    //
-    // MODULE: Run FastQC
-    //
-    FASTQC (
-        INPUT_CHECK.out.reads
-    )
-    ch_versions = ch_versions.mix(FASTQC.out.versions.first())
+    // ** Denoising ** //
+    DENOISING_MPPCA(dwi_channel)
 
-    CUSTOM_DUMPSOFTWAREVERSIONS (
-        ch_versions.unique().collectFile(name: 'collated_versions.yml')
-    )
+    // ** Extract b0 ** //
+    b0_channel = DENOISING_MPPCA.out.dwi
+        .combine(bval_channel)
+        .combine(bvec_channel)
+    UTILS_EXTRACTB0(b0_channel)
 
-    //
-    // MODULE: MultiQC
-    //
-    workflow_summary    = WorkflowFibercup.paramsSummaryMultiqc(workflow, summary_params)
-    ch_workflow_summary = Channel.value(workflow_summary)
+        // ** Bet ** //
+    bet_channel = DENOISING_MPPCA.out.dwi
+        .combine(bval_channel)
+        .combine(bvec_channel)
+    BETCROP_FSLBETCROP(bet_channel)
 
-    methods_description    = WorkflowFibercup.methodsDescriptionText(workflow, ch_multiqc_custom_methods_description, params)
-    ch_methods_description = Channel.value(methods_description)
+    // ** N4 ** //
+    n4_channel = BETCROP_FSLBETCROP.out.dwi
+        .combine(UTILS_EXTRACTB0.out.b0)
+        .combine(BETCROP_FSLBETCROP.out.mask)
+    PREPROC_N4(n4_channel)
 
-    ch_multiqc_files = Channel.empty()
-    ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-    ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
-    ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
-    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
+    // ** DTI ** //
+    dti_channel = PREPROC_N4.out.dwi
+        .combine(bval_channel)
+        .combine(bvec_channel)
+    RECONST_DTIMETRICS(dti_channel)
 
-    MULTIQC (
-        ch_multiqc_files.collect(),
-        ch_multiqc_config.toList(),
-        ch_multiqc_custom_config.toList(),
-        ch_multiqc_logo.toList()
-    )
-    multiqc_report = MULTIQC.out.report.toList()
+    // ** FRF ** //
+    frf_channel = PREPROC_N4.out.dwi
+        .combine(bval_channel)
+        .combine(bvec_channel)
+        .combine(b0_mask_channel)
+    RECONST_FRF(frf_channel)
+
+    // ** FODF ** //
+    fodf_channel = PREPROC_N4.out.dwi
+        .combine(bval_channel)
+        .combine(bvec_channel)
+        .combine(b0_mask_channel)
+        .combine(RECONST_DTIMETRICS.out.fa)
+        .combine(RECONST_DTIMETRICS.out.md)
+        .combine(RECONST_FRF.out.frf)
+    RECONST_FODF(fodf_channel)
+
+    // ** Local Tracking ** //
+    tracking_channel = RECONST_FODF.out.fodf
+        .combine(tracking_mask_channel)
+        .combine(seed_channel)
+    TRACKING_LOCALTRACKING(tracking_channel)
+
 }
 
 /*
@@ -118,7 +123,7 @@ workflow FIBERCUP {
 
 workflow.onComplete {
     if (params.email || params.email_on_fail) {
-        NfcoreTemplate.email(workflow, params, summary_params, projectDir, log, multiqc_report)
+        NfcoreTemplate.email(workflow, params, summary_params, projectDir, log)
     }
     NfcoreTemplate.dump_parameters(workflow, params)
     NfcoreTemplate.summary(workflow, params, log)
