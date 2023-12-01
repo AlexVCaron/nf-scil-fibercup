@@ -39,7 +39,7 @@ include { PREPROC_N4 } from "../modules/nf-scil/preproc/n4/main.nf"
 include { RECONST_DTIMETRICS } from "../modules/nf-scil/reconst/dtimetrics/main.nf"
 include { RECONST_FRF } from "../modules/nf-scil/reconst/frf/main.nf"
 include { RECONST_FODF } from "../modules/nf-scil/reconst/fodf/main.nf"
-include { TRACKING_LOCALTRACKING } from "../modules/nf-scil/tracking/localtracking/main.nf"
+//include { TRACKING_LOCALTRACKING } from "../modules/nf-scil/tracking/localtracking/main.nf"
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -73,7 +73,7 @@ workflow FIBERCUP {
     UTILS_EXTRACTB0(b0_channel)
 
         // ** Bet ** //
-    bet_channel = DENOISING_MPPCA.out.dwi
+    bet_channel = DENOISING_MPPCA.out.image
         .combine(ch_bval)
         .combine(ch_bvec)
     BETCROP_FSLBETCROP(bet_channel)
@@ -108,11 +108,12 @@ workflow FIBERCUP {
     RECONST_FODF(fodf_channel)
 
     // ** Local Tracking ** //
+    /*
     tracking_channel = RECONST_FODF.out.fodf
         .combine(tracking_mask_channel)
         .combine(seed_channel)
     TRACKING_LOCALTRACKING(tracking_channel)
-
+*/
 }
 
 /*
