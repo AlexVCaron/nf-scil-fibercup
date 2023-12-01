@@ -64,18 +64,18 @@ workflow FIBERCUP {
     ch_bvec = ch_versions.mix(INPUT_CHECK.out.bvec)
 
     // ** Denoising ** //
-    DENOISING_MPPCA(dwi_channel)
+    DENOISING_MPPCA(ch_dwi)
 
     // ** Extract b0 ** //
-    b0_channel = DENOISING_MPPCA.out.dwi
-        .combine(bval_channel)
-        .combine(bvec_channel)
+    b0_channel = DENOISING_MPPCA.out.image
+        .combine(ch_bval)
+        .combine(ch_bvec)
     UTILS_EXTRACTB0(b0_channel)
 
         // ** Bet ** //
     bet_channel = DENOISING_MPPCA.out.dwi
-        .combine(bval_channel)
-        .combine(bvec_channel)
+        .combine(ch_bval)
+        .combine(ch_bvec)
     BETCROP_FSLBETCROP(bet_channel)
 
     // ** N4 ** //
@@ -86,22 +86,22 @@ workflow FIBERCUP {
 
     // ** DTI ** //
     dti_channel = PREPROC_N4.out.dwi
-        .combine(bval_channel)
-        .combine(bvec_channel)
+        .combine(ch_bval)
+        .combine(ch_bvec)
     RECONST_DTIMETRICS(dti_channel)
 
     // ** FRF ** //
     frf_channel = PREPROC_N4.out.dwi
-        .combine(bval_channel)
-        .combine(bvec_channel)
-        .combine(b0_mask_channel)
+        .combine(ch_bval)
+        .combine(ch_bvec)
+        .combine(BETCROP_FSLBETCROP.out.mask)
     RECONST_FRF(frf_channel)
 
     // ** FODF ** //
     fodf_channel = PREPROC_N4.out.dwi
-        .combine(bval_channel)
-        .combine(bvec_channel)
-        .combine(b0_mask_channel)
+        .combine(ch_bval)
+        .combine(ch_bvec)
+        .combine(BETCROP_FSLBETCROP.out.mask)
         .combine(RECONST_DTIMETRICS.out.fa)
         .combine(RECONST_DTIMETRICS.out.md)
         .combine(RECONST_FRF.out.frf)
