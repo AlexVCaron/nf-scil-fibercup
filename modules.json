@@ -22,6 +22,47 @@
                     }
                 }
             }
+        },
+        "https://github.com/scilus/nf-scil.git": {
+            "modules": {
+                "nf-scil": {
+                    "betcrop/fslbetcrop": {
+                        "branch": "main",
+                        "git_sha": "701c3dacd90d5129ac11b030dbf461b221dd6937",
+                        "installed_by": ["modules"]
+                    },
+                    "denoising/mppca": {
+                        "branch": "main",
+                        "git_sha": "98796d3551ad5c0ebf6356e375d3850e7cfc64fe",
+                        "installed_by": ["modules"]
+                    },
+                    "preproc/n4": {
+                        "branch": "main",
+                        "git_sha": "7eea58371b89dfe254989183fd23262e233d4653",
+                        "installed_by": ["modules"]
+                    },
+                    "reconst/dtimetrics": {
+                        "branch": "main",
+                        "git_sha": "ef9ea4fd26019062173a9bba52ca4914a4944c0c",
+                        "installed_by": ["modules"]
+                    },
+                    "reconst/fodf": {
+                        "branch": "main",
+                        "git_sha": "ab60416d0923b97dbf4b9561b5ef2b08fe584791",
+                        "installed_by": ["modules"]
+                    },
+                    "reconst/frf": {
+                        "branch": "main",
+                        "git_sha": "1c1dda1aae448bc64bc738d13ddcca76ae5448c8",
+                        "installed_by": ["modules"]
+                    },
+                    "utils/extractb0": {
+                        "branch": "main",
+                        "git_sha": "6b200ce524794bd512c5590bba38c2662dce1e46",
+                        "installed_by": ["modules"]
+                    }
+                }
+            }
         }
     }
 }

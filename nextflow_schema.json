@@ -252,8 +252,8 @@
             "default": 20
         },
         "set_frf": {
-            "type": "string",
-            "default": "true"
+            "type": "boolean",
+            "default": true
         },
         "manual_frf": {
             "type": "string",
@@ -292,8 +292,8 @@
             "default": 0.1
         },
         "local_compress_streamlines": {
-            "type": "string",
-            "default": "true"
+            "type": "boolean",
+            "default": true
         },
         "local_algo": {
             "type": "string",
