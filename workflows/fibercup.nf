@@ -35,7 +35,7 @@ include { INPUT_CHECK } from '../subworkflows/local/input_check'
 include { DENOISING_MPPCA } from "../modules/nf-scil/denoising/mppca/main.nf"
 include { UTILS_EXTRACTB0 } from "../modules/nf-scil/utils/extractb0/main.nf"
 include { BETCROP_FSLBETCROP } from "../modules/nf-scil/betcrop/fslbetcrop/main.nf"
-include { PREPROC_N4 } from "./modules/nf-scil/preproc/n4/main.nf"
+include { PREPROC_N4 } from "../modules/nf-scil/preproc/n4/main.nf"
 include { RECONST_DTIMETRICS } from "../modules/nf-scil/reconst/dtimetrics/main.nf"
 include { RECONST_FRF } from "../modules/nf-scil/reconst/frf/main.nf"
 include { RECONST_FODF } from "../modules/nf-scil/reconst/fodf/main.nf"
