@@ -33,7 +33,7 @@
                     },
                     "denoising/mppca": {
                         "branch": "main",
-                        "git_sha": "98796d3551ad5c0ebf6356e375d3850e7cfc64fe",
+                        "git_sha": "2cadd86054c021adae6a7cbd05c762da18d70a21",
                         "installed_by": ["modules"]
                     },
                     "preproc/n4": {

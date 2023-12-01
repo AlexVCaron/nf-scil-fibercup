@@ -68,50 +68,50 @@ workflow FIBERCUP {
 
     // ** Extract b0 ** //
     b0_channel = DENOISING_MPPCA.out.image
-        .combine(ch_bval)
-        .combine(ch_bvec)
+        .join(ch_bval)
+        .join(ch_bvec)
     UTILS_EXTRACTB0(b0_channel)
 
         // ** Bet ** //
     bet_channel = DENOISING_MPPCA.out.image
-        .combine(ch_bval)
-        .combine(ch_bvec)
+        .join(ch_bval)
+        .join(ch_bvec)
     BETCROP_FSLBETCROP(bet_channel)
 
     // ** N4 ** //
     n4_channel = BETCROP_FSLBETCROP.out.dwi
-        .combine(UTILS_EXTRACTB0.out.b0)
-        .combine(BETCROP_FSLBETCROP.out.mask)
+        .join(UTILS_EXTRACTB0.out.b0)
+        .join(BETCROP_FSLBETCROP.out.mask)
     PREPROC_N4(n4_channel)
 
     // ** DTI ** //
     dti_channel = PREPROC_N4.out.dwi
-        .combine(ch_bval)
-        .combine(ch_bvec)
+        .join(ch_bval)
+        .join(ch_bvec)
     RECONST_DTIMETRICS(dti_channel)
 
     // ** FRF ** //
     frf_channel = PREPROC_N4.out.dwi
-        .combine(ch_bval)
-        .combine(ch_bvec)
-        .combine(BETCROP_FSLBETCROP.out.mask)
+        .join(ch_bval)
+        .join(ch_bvec)
+        .join(BETCROP_FSLBETCROP.out.mask)
     RECONST_FRF(frf_channel)
 
     // ** FODF ** //
     fodf_channel = PREPROC_N4.out.dwi
-        .combine(ch_bval)
-        .combine(ch_bvec)
-        .combine(BETCROP_FSLBETCROP.out.mask)
-        .combine(RECONST_DTIMETRICS.out.fa)
-        .combine(RECONST_DTIMETRICS.out.md)
-        .combine(RECONST_FRF.out.frf)
+        .join(ch_bval)
+        .join(ch_bvec)
+        .join(BETCROP_FSLBETCROP.out.mask)
+        .join(RECONST_DTIMETRICS.out.fa)
+        .join(RECONST_DTIMETRICS.out.md)
+        .join(RECONST_FRF.out.frf)
     RECONST_FODF(fodf_channel)
 
     // ** Local Tracking ** //
     /*
     tracking_channel = RECONST_FODF.out.fodf
-        .combine(tracking_mask_channel)
-        .combine(seed_channel)
+        .join(tracking_mask_channel)
+        .join(seed_channel)
     TRACKING_LOCALTRACKING(tracking_channel)
 */
 }

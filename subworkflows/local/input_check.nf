@@ -4,6 +4,12 @@
 
 include { SAMPLESHEET_CHECK } from '../../modules/local/samplesheet_check'
 
+def fetch_id ( dir, dir_base ) {
+    return [id:dir_base.relativize(dir)
+    .collect{it.name}
+    .join("_")]
+}
+
 workflow INPUT_CHECK {
     take:
     input_folder // file: /path/to/samplesheet.csv
