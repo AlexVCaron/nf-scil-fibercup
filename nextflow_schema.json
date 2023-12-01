@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema",
-    "$id": "https://raw.githubusercontent.com/nf-scil/fibercup/master/nextflow_schema.json",
+    "$id": "https://raw.githubusercontent.com/ThoumyreStanislas/nf-scil-fibercup/master/nextflow_schema.json",
     "title": "nf-scil/fibercup pipeline parameters",
     "description": "nfscil fibercup",
     "type": "object",
