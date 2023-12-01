@@ -1,7 +1,7 @@
 id: "nf-scil-fibercup-methods-description"
 description: "Suggested text and references to use when describing pipeline usage within the methods section of a publication."
 section_name: "nf-scil/fibercup Methods Description"
-section_href: "https://github.com/nf-scil/fibercup"
+section_href: "https://github.com/ThoumyreStanislas/nf-scil-fibercup"
 plot_type: "html"
 ## TODO nf-core: Update the HTML below to your preferred methods description, e.g. add publication citation for this pipeline
 ## You inject any metadata in the Nextflow '${workflow}' object

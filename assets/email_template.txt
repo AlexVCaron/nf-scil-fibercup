@@ -28,4 +28,4 @@ Pipeline Configuration:
 
 --
 nf-scil/fibercup
-https://github.com/nf-scil/fibercup
+https://github.com/ThoumyreStanislas/nf-scil-fibercup
