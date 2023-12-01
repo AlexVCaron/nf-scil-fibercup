@@ -22,7 +22,7 @@
                     "mimetype": "text/csv",
                     "description": "input directory containing dwi, bval, bvec.",
                     "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row.",
-                    "fa_icon": "fas fa-file-csv"
+                    "fa_icon": "fas fa-folder-open"
                 },
                 "outdir": {
                     "type": "string",
@@ -230,111 +230,125 @@
         }
     ],
     "properties": {
-        "extent": {
-            "type": "integer",
-            "default": 3
-        },
-        "fa": {
-            "type": "number",
-            "default": 0.7
-        },
-        "min_fa": {
-            "type": "number",
-            "default": 0.5
-        },
-        "min_nvox": {
-            "type": "integer",
-            "default": 300
-        },
-        "roi_radius": {
-            "type": "integer",
-            "default": 20
-        },
-        "set_frf": {
-            "type": "boolean",
-            "default": true
-        },
-        "manual_frf": {
-            "type": "string",
-            "default": "15,4,4"
-        },
-        "b0_thr_extract_b0": {
-            "type": "integer",
-            "default": 10
-        },
         "dwi_shell_tolerance": {
             "type": "integer",
             "default": 20
         },
-        "min_fodf_shell_value": {
-            "type": "integer",
-            "default": 700
-        },
-        "sh_order": {
-            "type": "integer",
-            "default": 8
-        },
-        "sh_basis": {
-            "type": "string",
-            "default": "descoteaux07"
-        },
-        "fa_threshold": {
-            "type": "number",
-            "default": 0.1
-        },
-        "md_threshold": {
-            "type": "number",
-            "default": 0.003
-        },
-        "relative_threshold": {
-            "type": "number",
-            "default": 0.1
-        },
-        "local_compress_streamlines": {
-            "type": "boolean",
-            "default": true
-        },
-        "local_algo": {
-            "type": "string",
-            "default": "prob"
-        },
-        "local_seeding": {
-            "type": "string",
-            "default": "npv"
-        },
-        "local_nbr_seeds": {
+        "b0_threshold": {
             "type": "integer",
             "default": 10
         },
-        "local_step": {
-            "type": "number",
-            "default": 0.5
+        "compress_streamlines": {
+            "type": "boolean",
+            "default": true
         },
-        "local_theta": {
-            "type": "integer",
-            "default": 20
-        },
-        "local_sfthres": {
-            "type": "number",
-            "default": 0.1
-        },
-        "local_sfthres_init": {
-            "type": "number",
-            "default": 0.5
-        },
-        "local_min_len": {
-            "type": "integer",
-            "default": 20
-        },
-        "local_max_len": {
-            "type": "integer",
-            "default": 200
-        },
-        "local_compress_value": {
+        "compression_length": {
             "type": "number",
             "default": 0.2
         },
-        "local_random_seed": {
+        "mppca_kernel_size": {
+            "type": "integer",
+            "default": 3
+        },
+        "bet_f_value": {
+            "type": "number",
+            "default": 0.16
+        },
+        "n4_knots_per_voxel": {
+            "type": "number",
+            "default": 1
+        },
+        "n4_shrink_factor": {
+            "type": "integer",
+            "default": 1
+        },
+        "frf_max_fa": {
+            "type": "number",
+            "default": 0.7
+        },
+        "frf_min_fa": {
+            "type": "number",
+            "default": 0.5
+        },
+        "frf_min_nvox": {
+            "type": "integer",
+            "default": 100
+        },
+        "frf_roi_radius": {
+            "type": "integer",
+            "default": 20
+        },
+        "frf_set_fixed": {
+            "type": "boolean"
+        },
+        "frf_manual_response": {
+            "type": "string",
+            "default": "15,4,4"
+        },
+        "fodf_shells": {
+            "type": "string"
+        },
+        "fodf_sh_order": {
+            "type": "integer",
+            "default": 8
+        },
+        "fodf_sh_basis": {
+            "type": "string",
+            "default": "descoteaux07"
+        },
+        "fodf_ventricle_max_fa": {
+            "type": "number",
+            "default": 0.1
+        },
+        "fodf_ventricle_min_md": {
+            "type": "number",
+            "default": 0.003
+        },
+        "fodf_maxima_absolute_thr": {
+            "type": "number",
+            "default": 1.5
+        },
+        "fodf_maxima_relative_thr": {
+            "type": "number",
+            "default": 0.1
+        },
+        "local_tracking_algo": {
+            "type": "string",
+            "default": "prob"
+        },
+        "local_tracking_seeding": {
+            "type": "string",
+            "default": "npv"
+        },
+        "local_tracking_nseeds": {
+            "type": "integer",
+            "default": 10
+        },
+        "local_tracking_step": {
+            "type": "number",
+            "default": 0.5
+        },
+        "local_tracking_theta_max": {
+            "type": "number",
+            "default": 20
+        },
+        "local_tracking_sfthres": {
+            "type": "number",
+            "default": 0.1
+        },
+        "local_tracking_sfthres_init": {
+            "type": "number",
+            "default": 0.5
+        },
+        "local_tracking_min_length": {
+            "type": "number",
+            "default": 20
+        },
+        "local_tracking_max_length": {
+            "type": "number",
+            "default": 200
+        },
+        "local_tracking_random_seed": {
             "type": "integer",
             "default": 0
         }
