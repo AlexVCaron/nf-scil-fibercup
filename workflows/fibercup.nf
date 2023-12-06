@@ -88,6 +88,7 @@ workflow FIBERCUP {
     dti_channel = PREPROC_N4.out.dwi
         .join(ch_bval)
         .join(ch_bvec)
+        .join(BETCROP_FSLBETCROP.out.mask)
     RECONST_DTIMETRICS(dti_channel)
 
     // ** FRF ** //
